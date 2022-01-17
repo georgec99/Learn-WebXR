@@ -4,7 +4,7 @@ import { FBXLoader } from '../../libs/three/jsm/FBXLoader.js';
 import { RGBELoader } from '../../libs/three/jsm/RGBELoader.js';
 import { OrbitControls } from '../../libs/three/jsm/OrbitControls.js';
 import { LoadingBar } from '../../libs/LoadingBar.js';
-import { vector3ToString } from '../../libs/DebugUtils.js';
+
 
 class App{
 	constructor(){
@@ -17,11 +17,11 @@ class App{
 		this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color( 0xaaaaaa );
 
-		const ambient = new THREE.HemisphereLight(0xffffff, 0x666666, 0.3);
+		const ambient = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 0.5);
 		this.scene.add(ambient);
         
-        const light = new THREE.DirectionalLight();
-        light.position.set( 0.2, 1, 1.5);
+        const light = new THREE.DirectionalLight( 0xFFFFFF, 1.5 );
+        light.position.set( 0.2, 1, 1);
         this.scene.add(light);
 			
 		this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true } );
@@ -31,11 +31,12 @@ class App{
         this.renderer.physicallyCorrectLights = true;
         this.setEnvironment();
 		container.appendChild( this.renderer.domElement );
-		
-        //Add code here
-        this.loadingBar = new LoadingBar();
-        this.loadFBX();
         
+		//Add code here
+        this.loadingBar = new LoadingBar();
+        //this.loadGLTF();
+        this.loadFBX();
+
         this.controls = new OrbitControls( this.camera, this.renderer.domElement );
         this.controls.target.set(0, 3.5, 0);
         this.controls.update();
@@ -62,19 +63,47 @@ class App{
     }
     
     loadGLTF(){
+        const self = this;
+        const loader = new GLTFLoader().setPath('../../assets/');
+
+
+        loader.load(
+    
+            'office-chair.glb',
+            function(gltf){
+                self.chair = gltf.scene;
+                const bbox = new THREE.Box3().setFromObject( gltf.scene );
+                //console.log(`min:${vector3ToString(bbox.min, 2)} - max:${vector3ToString(bbox.max, 2)}`);
+                gltf.scene.traverse( ( child ) => {
+                    if (child.isMesh){
+                        child.material.metalness = 0.2;
+                    }
+                })
+                self.scene.add( gltf.scene );
+                self.loadingBar.visible = false;
+                self.renderer.setAnimationLoop (self.render.bind(self) );
+            },
+            function(xhr){
+                self.loadingBar.progress = xhr.loaded/xhr.total;
+            },
+            function(err){
+                console.error( err );
+            }
+        )
        
     }
     
     loadFBX(){
         const self = this;
+        
         const loader = new FBXLoader().setPath('../../assets/');
 
         loader.load(
             'office-chair.fbx',
             function(object){
                 self.chair = object;
-                const bbox = new THREE.Box3().setFromObject( object );
-                console.log(`min:${vector3ToString(bbox.min, 2)} - max:${vector3ToString(bbox.max, 2)}`);
+                // const bbox = new THREE.Box3().setFromObject( object );
+                //console.log(`min:${vector3ToString(bbox.min, 2)} - max:${vector3ToString(bbox.max, 2)}`);
                 self.scene.add( object );
                 self.loadingBar.visible = false;
                 self.renderer.setAnimationLoop (self.render.bind(self) );

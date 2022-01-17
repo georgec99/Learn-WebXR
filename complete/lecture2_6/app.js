@@ -4,7 +4,7 @@ import { FBXLoader } from '../../libs/three/jsm/FBXLoader.js';
 import { RGBELoader } from '../../libs/three/jsm/RGBELoader.js';
 import { OrbitControls } from '../../libs/three/jsm/OrbitControls.js';
 import { LoadingBar } from '../../libs/LoadingBar.js';
-
+//c
 class App{
 	constructor(){
 		const container = document.createElement( 'div' );
