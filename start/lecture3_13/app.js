@@ -1,7 +1,7 @@
 import * as THREE from '../../libs/three/jsm/three.module.js';
 import { VRButton } from '../../libs/VRButton.js';
 import { XRControllerModelFactory } from '../../libs/three/jsm/XRControllerModelFactory.js';
-import { XRHandModelFactory } from '../../libs/three/jsm/XRHandModelFactory.js';
+import { XRHandModelFactory } from '../../libs/three125/XRHandModelFactory.js';
 import { OrbitControls } from '../../libs/three/jsm/OrbitControls.js';
 
 class App{
@@ -87,7 +87,67 @@ class App{
 		this.controller2.add( line.clone() );
         
         //Add hand code here
-        
+        const handModelFactory = new XRHandModelFactory().setPath("../../assets/");
+
+        this.handModels = {
+            left: null,
+            right: null
+        };
+
+        this.currentHandModel = {
+            left: 0,
+            right: 0
+        };
+        //hand 1
+        this.hand1 = this.renderer.xr.getHand(0);
+        this.scene.add( this.hand1 );
+
+        this.handModels.right = [
+            handModelFactory.createHandModel( this.hand1, "boxes" ),
+            handModelFactory.createHandModel( this.hand1, "spheres" ),
+            handModelFactory.createHandModel( this.hand1, "oculus" , { model:
+            "lowpoly" } ),
+            handModelFactory.createHandModel( this.hand1, "oculus" ),
+        ];
+
+        this.handModels.right.forEach( model => {
+            model.visible = false;
+            this.hand1.add(model);
+        });
+
+        const self = this;
+
+        this.handModels.right[ this.currentHandModels.right ].visible = true;
+
+        this.hand1.addEventListener( 'pinchend', evt => {
+            self.cycleHandModel( evt.handedness);
+        });
+    
+        //hand2
+
+        this.hand2 = this.renderer.xr.getHand(1);
+        this.scene.add( this.hand2 );
+
+        this.handModels.right = [
+            handModelFactory.createHandModel( this.hand2, "boxes" ),
+            handModelFactory.createHandModel( this.hand2, "spheres" ),
+            handModelFactory.createHandModel( this.hand2, "oculus" , { model:
+            "lowpoly" } ),
+            handModelFactory.createHandModel( this.hand2, "oculus" ),
+        ];
+
+        this.handModels.left.forEach( model => {
+            model.visible = false;
+            this.hand2.add(model);
+        });
+
+        const self = this;
+
+        this.handModels.left[ this.currentHandModels.left ].visible = true;
+
+        this.hand2.addEventListener( 'pinchend', evt => {
+            self.cycleHandModel( evt.handedness);
+        });
 
     }
     
