@@ -1,8 +1,8 @@
-import * as THREE from '../../libs/three/jsm/three.module.js';
+import * as THREE from '../../libs/three125/three.module.js';
 import { VRButton } from '../../libs/VRButton.js';
-import { XRControllerModelFactory } from '../../libs/three/jsm/XRControllerModelFactory.js';
+import { XRControllerModelFactory } from '../../libs/three125/XRControllerModelFactory.js';
 import { XRHandModelFactory } from '../../libs/three125/XRHandModelFactory.js';
-import { OrbitControls } from '../../libs/three/jsm/OrbitControls.js';
+import { OrbitControls } from '../../libs/three125/OrbitControls.js';
 
 class App{
 	constructor(){
@@ -117,7 +117,7 @@ class App{
 
         const self = this;
 
-        this.handModels.right[ this.currentHandModels.right ].visible = true;
+        this.handModels.right[ this.currentHandModel.right ].visible = true;
 
         this.hand1.addEventListener( 'pinchend', evt => {
             self.cycleHandModel( evt.handedness);
@@ -128,7 +128,7 @@ class App{
         this.hand2 = this.renderer.xr.getHand(1);
         this.scene.add( this.hand2 );
 
-        this.handModels.right = [
+        this.handModels.left = [
             handModelFactory.createHandModel( this.hand2, "boxes" ),
             handModelFactory.createHandModel( this.hand2, "spheres" ),
             handModelFactory.createHandModel( this.hand2, "oculus" , { model:
@@ -141,9 +141,9 @@ class App{
             this.hand2.add(model);
         });
 
-        const self = this;
+        
 
-        this.handModels.left[ this.currentHandModels.left ].visible = true;
+        this.handModels.left[ this.currentHandModel.left ].visible = true;
 
         this.hand2.addEventListener( 'pinchend', evt => {
             self.cycleHandModel( evt.handedness);
