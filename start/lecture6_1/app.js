@@ -224,6 +224,7 @@ class App{
         if (intersect.length>0 ){
             if (intersect[0].distance<wallLimit) this.dolly.translateX(
                 wallLimit - intersect[0].distance );
+            }
 
         dir.set(1, 0, 0);
         dir.applyMatrix4( this.dolly.matrix);
