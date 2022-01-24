@@ -324,7 +324,7 @@ class App{
                 moveGaze = (this.gazeController.mode == GazeController.Modes.MOVE);
             }
 
-            if (this.selectPressed){
+            if (this.selectPressed || moveGaze ){
                 this.moveDolly(dt);
                 if (this.boardData){
                     const scene = this.scene;
