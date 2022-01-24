@@ -173,13 +173,23 @@ class App{
         
         }
         
+        function onConnected (event ){
+            clearTimeout( timeoutId);
+        }
+
+        function connectionTimeout(){
+            self.useGaze = true;
+            self.gazeController = new GazeController( self.scene, self.dummyCam);
+        }
+        const  timeoutId = setTimeout( connectionTimeout, 2000);
+
         this.controllers = this.buildControllers( this.dolly );
         
         this.controllers.forEach( ( controller ) =>{
             controller.addEventListener( 'selectstart', onSelectStart );
             controller.addEventListener( 'selectend', onSelectEnd );
+            controller.addEventListener( 'connected', onConnected );
         });
-        
         const config = {
             panelSize: { height: 0.5 },
             height: 256,
@@ -307,6 +317,13 @@ class App{
         const dt = this.clock.getDelta();
         
         if (this.renderer.xr.isPresenting){
+            let moveGaze = false;
+
+            if(this.useGaze && this.gazeController!==undefined){
+                this.gazeController.update();
+                moveGaze = (this.gazeController.mode == GazeController.Modes.MOVE);
+            }
+
             if (this.selectPressed){
                 this.moveDolly(dt);
                 if (this.boardData){
