@@ -161,7 +161,12 @@ class App{
         }
         
         function showQuestion(){
-            
+            const question = self.questions.questions[questionIndex];
+            self.ui.updateElement("header", "Heather");
+            self.ui.updateElement("panel", question.text);
+            self.ui.updateConfig("prev", "display", "none");
+            self.ui.updateConfig("next", "display", "none");
+            self.playSound(`option${questionIndex + 1}`)
         }
         
         function onPrev(){
@@ -173,7 +178,7 @@ class App{
             answerIndex++;
             showOption();
         }
-        
+         
         function onContinue(){
             if ( questionIndex<0 ){
                 questionIndex = 0;
@@ -272,7 +277,16 @@ class App{
     }
     
     playSound( sndname ){
-        
+        const sound = this.speech;
+
+        const audioLoader = new THREE.AudioLoader();
+        audioLoader.load(`audio/${sndname}.mp3`, buffer =>{
+            if (sound.isPlaying) sound.stop();
+            sound.setBuffer( buffer );
+            sound.setLoop( false );
+            sound.setVolume( 1.0 );
+            sound.play();
+        })
     }
     
     setupXR(){
